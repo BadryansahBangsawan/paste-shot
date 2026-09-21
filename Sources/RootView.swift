@@ -14,11 +14,10 @@ struct RootView: View {
 
             Toggle(isOn: enabledBinding) {
                 Text(store.isEnabled ? "On" : "Off")
-                    .font(.headline)
+                    .font(.body.weight(.semibold))
             }
             .toggleStyle(.switch)
-            .controlSize(.regular)
-            .extraRowSurface()
+            .controlSize(.small)
 
             ExtraSettingsFooter()
         }

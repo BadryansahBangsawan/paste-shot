@@ -11,7 +11,7 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 | Product | `PasteShot` |
 | Bundle ID | `engineer.badry.pasteshot` |
 | Status item | SF Symbol `doc.on.clipboard` (title: `Paste Shot`, `Copied`, or `Off`) |
-| Panel | opaque ~220×108 pt, On/Off switch |
+| Panel | compact On/Off + Settings |
 
 ## Features
 
