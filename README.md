@@ -11,7 +11,7 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 | Product | `PasteShot` |
 | Bundle ID | `engineer.badry.pasteshot` |
 | Status item | SF Symbol `doc.on.clipboard` (title: `Paste Shot`, `Copied`, or `Off`) |
-| Panel | opaque ~360×420 pt, On/Off switch |
+| Panel | opaque ~220×108 pt, On/Off switch |
 
 ## Features
 
@@ -67,7 +67,7 @@ Enable **Open at Login** from Settings if you want it after reboot.
 
 This is an `LSUIElement` extra. Proof it is running is the **clipboard** status item on the **right** of the menu bar, not a window from Finder or Launchpad.
 
-1. Click that extra. The panel is opaque (~360×420), not a 10px strip.
+1. Click that extra. The panel is a small opaque On/Off switch, not a 10px strip.
 2. If the bar is full, look behind the Control Center overflow chevron **«**.
 3. Double-clicking the app in Finder/Launchpad only changes the left-side app name. That is expected. There is no Dock icon.
 
@@ -116,7 +116,7 @@ Or delete `/Applications/PasteShot.app`. Turn off Open at Login in Settings firs
 | **Screenshot folder missing.** | Create the folder in Screenshot settings, or restore Desktop. |
 | ⌘⇧4 did nothing | Switch **On**. Use file save, not Control (clipboard-only). Filename should start with `Screenshot `, `Screen Shot `, or `Tangkapan Layar `, or Spotlight `kMDItemIsScreenCapture`. |
 | Random PNG in the folder was not copied | Intended. Only screenshots are copied. |
-| ~10px empty strip under the bar | Reinstall from this repo (panel min height 420). |
+| ~10px empty strip under the bar | Reinstall from this repo (compact panel, not a collapsed extra). |
 
 ## Development
 
@@ -126,7 +126,7 @@ swift build -c release --product PasteShot
 bash package-app.sh
 ```
 
-Layout: `Sources/` (SwiftPM executable), `Info.plist`, `Assets/AppIcon.icns`, `package-app.sh`. Never commit `dist/`. `FunTheme.swift` is copied verbatim (no shared package).
+Layout: `Sources/` (SwiftPM executable), `Info.plist`, `Assets/AppIcon.icns`, `package-app.sh`. Never commit `dist/`.
 
 ## License
 

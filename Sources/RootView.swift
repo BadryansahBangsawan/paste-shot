@@ -12,19 +12,13 @@ struct RootView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            Spacer(minLength: 0)
-
             Toggle(isOn: enabledBinding) {
                 Text(store.isEnabled ? "On" : "Off")
-                    .font(.title2.weight(.semibold))
+                    .font(.headline)
             }
             .toggleStyle(.switch)
-            .controlSize(.large)
-            .padding(.vertical, 12)
-            .padding(.horizontal, 4)
+            .controlSize(.regular)
             .extraRowSurface()
-
-            Spacer(minLength: 0)
 
             ExtraSettingsFooter()
         }

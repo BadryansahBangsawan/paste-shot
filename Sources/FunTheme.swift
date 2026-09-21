@@ -3,9 +3,9 @@ import SwiftUI
 
 enum FunTheme {
     static let spring = Animation.spring(response: 0.35, dampingFraction: 1.0)
-    static let panelWidth: CGFloat = 360
-    static let panelMinHeight: CGFloat = 420
-    static let panelMaxHeight: CGFloat = 560
+    static let panelWidth: CGFloat = 220
+    static let panelMinHeight: CGFloat = 108
+    static let panelMaxHeight: CGFloat = 200
     static let padding: CGFloat = 16
     static let innerSpacing: CGFloat = 8
     static let sectionSpacing: CGFloat = 16
@@ -20,7 +20,10 @@ final class ExtraPanelBacking: NSView {
         window.isOpaque = true
         window.backgroundColor = .windowBackgroundColor
         window.hasShadow = true
-        window.contentMinSize = NSSize(width: FunTheme.panelWidth, height: FunTheme.panelMinHeight)
+        let size = NSSize(width: FunTheme.panelWidth, height: FunTheme.panelMinHeight)
+        window.contentMinSize = size
+        window.contentMaxSize = NSSize(width: FunTheme.panelWidth, height: FunTheme.panelMaxHeight)
+        window.setContentSize(size)
     }
 
     override func updateLayer() {
