@@ -16,8 +16,8 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 ## Features
 
 - Watches the system screenshot folder (`com.apple.screencapture` `location`, else Desktop). Does not capture the screen.
-- Copies a new screenshot as PNG onto `NSPasteboard` for ⌘V.
-- Deletes the screenshot file after it is copied for ⌘V.
+- Copies a new screenshot as PNG onto `NSPasteboard` for ⌘V in image apps, and a quoted file path for Terminal.
+- Deletes the original screenshot after copy. A copy stays at `~/Library/Application Support/PasteShot/last.png`.
 - Ignores non-screenshot PNGs (and other files) in that folder.
 - Allowed types: png, jpg, jpeg, heic, tif, tiff, pdf.
 - Panel is an On/Off switch.
@@ -73,7 +73,7 @@ This is an `LSUIElement` extra. Proof it is running is the **clipboard** status 
 ## Usage
 
 1. Click the extra. The panel is an **On / Off** switch.
-2. **On** (default): ⌘⇧3 or ⌘⇧4 (file save, not Control) copies the PNG for ⌘V, then deletes the file.
+2. **On** (default): ⌘⇧3 or ⌘⇧4 (file save, not Control) copies PNG + path, then deletes the original. ⌘V in Notes/Slack pastes the image; in Terminal pastes the path.
 3. **Off**: new screenshots are not copied.
 
 A PNG dropped into the folder that is not a screenshot is ignored.
@@ -90,13 +90,15 @@ No Screen Recording. No Accessibility. Files and Folders for the screenshot fold
 |---|---|
 | On/Off | `UserDefaults` `engineer.badry.pasteshot.enabled` |
 | Screenshot folder grant | `UserDefaults` security-scoped bookmark |
-| Screenshot files | The system screenshot folder (unchanged) |
+| Last PNG + Terminal path | `~/Library/Application Support/PasteShot/last.png` |
+| Original screenshot | Deleted after copy |
 
-The app does not store a copy of screenshots. It does not crash if the folder is missing; the panel shows a red **Screenshot folder missing.**
+The app does not crash if the screenshot folder is missing; the panel shows a red **Screenshot folder missing.**
 
 ## Privacy
 
-Screenshot bytes go to `NSPasteboard.general` on this Mac. Nothing is uploaded.
+Screenshot bytes stay on this Mac (pasteboard + `last.png`). Nothing is uploaded.
+
 
 ## Uninstall
 
@@ -104,7 +106,7 @@ Screenshot bytes go to `NSPasteboard.general` on this Mac. Nothing is uploaded.
 brew uninstall --cask paste-shot
 ```
 
-Or delete `/Applications/PasteShot.app`.
+Or delete `/Applications/PasteShot.app`. Then `rm -rf "$HOME/Library/Application Support/PasteShot"`.
 
 ## Troubleshooting
 
