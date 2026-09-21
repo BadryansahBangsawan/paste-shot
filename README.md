@@ -40,7 +40,7 @@ xattr -cr /Applications/PasteShot.app
 open /Applications/PasteShot.app
 ```
 
-If Gatekeeper blocks it or says it is damaged: System Settings → Privacy & Security → Open Anyway. Ad-hoc signed (`codesign -s -`).
+If Gatekeeper blocks it or says it is damaged: System Settings → Privacy & Security → Open Anyway. Ad-hoc signed (`codesign -s -`). Opens at login after the first successful launch (`SMAppService`).
 
 Homebrew:
 
@@ -95,6 +95,7 @@ No Screen Recording. No Accessibility. Files and Folders for the screenshot fold
 | What | Where |
 |---|---|
 | On/Off | `UserDefaults` `engineer.badry.pasteshot.enabled` |
+| Open at Login | `SMAppService.mainApp` (registered on launch) |
 | Screenshot folder grant | `UserDefaults` security-scoped bookmark |
 | Last PNG + Terminal path | `~/Library/Application Support/PasteShot/last.png` |
 | Original screenshot | Deleted after copy |
@@ -112,7 +113,7 @@ Screenshot bytes stay on this Mac (pasteboard + `last.png`). Nothing is uploaded
 brew uninstall --cask paste-shot
 ```
 
-Or delete `/Applications/PasteShot.app`. Then `rm -rf "$HOME/Library/Application Support/PasteShot"`.
+Or delete `/Applications/PasteShot.app`. Then `rm -rf "$HOME/Library/Application Support/PasteShot"`. Turn off **Paste Shot** in System Settings → General → Login Items if it remains.
 
 ## Troubleshooting
 

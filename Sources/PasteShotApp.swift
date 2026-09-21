@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 import SwiftUI
 
 @main
@@ -18,5 +19,12 @@ struct PasteShotApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApplication.shared.setActivationPolicy(.accessory)
+        if SMAppService.mainApp.status != .enabled {
+            do {
+                try SMAppService.mainApp.register()
+            } catch {
+                NSLog("Paste Shot Open at Login: \(error.localizedDescription)")
+            }
+        }
     }
 }
