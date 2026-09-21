@@ -4,7 +4,7 @@ import SwiftUI
 enum FunTheme {
     static let spring = Animation.spring(response: 0.35, dampingFraction: 1.0)
     static let panelWidth: CGFloat = 168
-    static let panelMinHeight: CGFloat = 72
+    static let panelMinHeight: CGFloat = 48
     static let panelMaxHeight: CGFloat = 160
     static let padding: CGFloat = 10
     static let innerSpacing: CGFloat = 8
@@ -20,17 +20,20 @@ final class ExtraPanelBacking: NSView {
         window.isOpaque = true
         window.backgroundColor = .windowBackgroundColor
         window.hasShadow = true
-        let size = NSSize(
-            width: FunTheme.panelWidth + FunTheme.padding * 2,
-            height: FunTheme.panelMinHeight + FunTheme.padding * 2
-        )
-        window.contentMinSize = size
-        window.contentMaxSize = NSSize(
-            width: size.width,
-            height: FunTheme.panelMaxHeight + FunTheme.padding * 2
-        )
-        window.setContentSize(size)
+        window.contentMinSize = NSSize(width: FunTheme.panelWidth, height: FunTheme.panelMinHeight)
     }
+
+    override func layout() {
+        super.layout()
+        guard let window else { return }
+        let height = ceil(bounds.height)
+        let width = ceil(bounds.width)
+        guard height > 40, width > 40 else { return }
+        if window.frame.height > height + 1 {
+            window.setContentSize(NSSize(width: max(width, FunTheme.panelWidth), height: height))
+        }
+    }
+
 
     override func updateLayer() {
         layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
@@ -57,10 +60,11 @@ extension View {
     func funPanel() -> some View {
         self
             .frame(width: FunTheme.panelWidth, alignment: .leading)
-            .frame(minHeight: FunTheme.panelMinHeight, maxHeight: FunTheme.panelMaxHeight, alignment: .topLeading)
+            .fixedSize(horizontal: false, vertical: true)
             .font(.system(.body))
-            .padding(FunTheme.padding)
+            .padding(EdgeInsets(top: 8, leading: 10, bottom: 0, trailing: 10))
             .background(ExtraPanelBackground())
+            .ignoresSafeArea()
     }
 
     func extraRowSurface() -> some View {
@@ -112,12 +116,15 @@ struct ExtraEmptyState: View {
 
 struct ExtraSettingsFooter: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: FunTheme.innerSpacing) {
+        VStack(alignment: .leading, spacing: 6) {
             Divider()
             SettingsLink {
                 Label("Settings", systemImage: "gearshape")
             }
             .buttonStyle(.bordered)
+            .controlSize(.small)
         }
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(.bottom, -2)
     }
 }
