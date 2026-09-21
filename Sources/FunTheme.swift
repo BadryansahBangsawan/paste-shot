@@ -3,10 +3,10 @@ import SwiftUI
 
 enum FunTheme {
     static let spring = Animation.spring(response: 0.35, dampingFraction: 1.0)
-    static let panelWidth: CGFloat = 168
-    static let panelMinHeight: CGFloat = 48
-    static let panelMaxHeight: CGFloat = 160
-    static let padding: CGFloat = 10
+    static let panelWidth: CGFloat = 232
+    static let panelMinHeight: CGFloat = 44
+    static let panelMaxHeight: CGFloat = 120
+    static let padding: CGFloat = 12
     static let innerSpacing: CGFloat = 8
     static let sectionSpacing: CGFloat = 8
     static let rowRadius: CGFloat = 8
@@ -62,7 +62,7 @@ extension View {
             .frame(width: FunTheme.panelWidth, alignment: .leading)
             .fixedSize(horizontal: false, vertical: true)
             .font(.system(.body))
-            .padding(EdgeInsets(top: 8, leading: 10, bottom: 0, trailing: 10))
+            .padding(FunTheme.padding)
             .background(ExtraPanelBackground())
             .ignoresSafeArea()
     }

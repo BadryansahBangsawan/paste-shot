@@ -12,11 +12,6 @@ struct PasteShotApp: App {
                 .environmentObject(store)
         }
         .menuBarExtraStyle(.window)
-
-        Settings {
-            SettingsView()
-                .environmentObject(store)
-        }
     }
 }
 

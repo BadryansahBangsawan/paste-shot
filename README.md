@@ -61,7 +61,6 @@ open /Applications/PasteShot.app
 
 Do not run `dist/PasteShot.app` while `/Applications/PasteShot.app` is running (same bundle ID).
 
-Enable **Open at Login** from Settings if you want it after reboot.
 
 ## How to open
 
@@ -76,22 +75,22 @@ This is an `LSUIElement` extra. Proof it is running is the **clipboard** status 
 1. Click the extra. The panel is an **On / Off** switch.
 2. **On** (default): ⌘⇧3 or ⌘⇧4 (file save, not Control) copies the screenshot PNG for ⌘V. The file stays on disk.
 3. **Off**: new screenshots are not copied.
-4. **Settings** at the bottom: Open at Login, Quit.
 
 A PNG dropped into the folder that is not a screenshot is ignored.
 
 ## Permissions
 
-No Screen Recording. No Accessibility. Files and Folders for the screenshot folder (Desktop / Documents / Downloads, or a folder you pick) is requested **once**. Settings → **Allow screenshot folder…** if macOS still asks.
+No Screen Recording. No Accessibility. Files and Folders for the screenshot folder is requested **once** by macOS.
+
 
 
 ## Data
+
 | What | Where |
 |---|---|
 | On/Off | `UserDefaults` `engineer.badry.pasteshot.enabled` |
 | Screenshot folder grant | `UserDefaults` security-scoped bookmark |
 | Screenshot files | The system screenshot folder (unchanged) |
-| Open at Login | `SMAppService.mainApp` |
 
 The app does not store a copy of screenshots. It does not crash if the folder is missing; the panel shows a red **Screenshot folder missing.**
 
@@ -105,7 +104,7 @@ Screenshot bytes go to `NSPasteboard.general` on this Mac. Nothing is uploaded.
 brew uninstall --cask paste-shot
 ```
 
-Or delete `/Applications/PasteShot.app`. Turn off Open at Login in Settings first if you enabled it.
+Or delete `/Applications/PasteShot.app`.
 
 ## Troubleshooting
 
