@@ -29,7 +29,20 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 
 ## Install
 
-Homebrew (macOS 14+):
+Disk image (macOS 14+):
+
+1. Download **PasteShot-*version*.dmg** from [Releases](https://github.com/BadryansahBangsawan/paste-shot/releases).
+2. Open the image. Drag **PasteShot** onto **Applications**.
+3. Then:
+
+```bash
+xattr -cr /Applications/PasteShot.app
+open /Applications/PasteShot.app
+```
+
+If Gatekeeper blocks it or says it is damaged: System Settings → Privacy & Security → Open Anyway. Ad-hoc signed (`codesign -s -`).
+
+Homebrew:
 
 ```bash
 brew tap BadryansahBangsawan/mac-menu-apps
@@ -39,14 +52,7 @@ brew install --cask paste-shot
 
 `brew trust` is required on Homebrew 6 or `brew install --cask` refuses the tap.
 
-Opens as a menu extra (no Dock icon). The cask is ad-hoc signed. If Gatekeeper blocks it or says it is damaged:
-
-```bash
-xattr -cr /Applications/PasteShot.app
-open /Applications/PasteShot.app
-```
-
-If still blocked: System Settings → Privacy & Security → Open Anyway.
+Opens as a menu extra (no Dock icon). Do not run `dist/PasteShot.app` while `/Applications/PasteShot.app` is running (same bundle ID).
 
 Build from source:
 
@@ -126,9 +132,11 @@ Or delete `/Applications/PasteShot.app`. Then `rm -rf "$HOME/Library/Application
 swift build
 swift build -c release --product PasteShot
 bash package-app.sh
+bash make-dmg.sh
 ```
 
-Layout: `Sources/` (SwiftPM executable), `Info.plist`, `Assets/AppIcon.icns`, `package-app.sh`. Never commit `dist/`.
+Layout: `Sources/` (SwiftPM executable), `Info.plist`, `Assets/AppIcon.icns`, `package-app.sh`, `make-dmg.sh`. Never commit `dist/`.
+
 
 ## License
 
