@@ -26,7 +26,7 @@ final class ScreenshotWatcher {
         let callback: FSEventStreamCallback = { _, info, numEvents, eventPaths, eventFlags, _ in
             guard let info else { return }
             let watcher = Unmanaged<ScreenshotWatcher>.fromOpaque(info).takeUnretainedValue()
-            let pathArray = Unmanaged<CFArray>.fromOpaque(eventPaths).takeUnretainedValue() as NSArray
+            let pathArray = unsafeBitCast(eventPaths, to: NSArray.self)
             for index in 0..<numEvents {
                 let flags = eventFlags[index]
                 if flags & UInt32(kFSEventStreamEventFlagItemRemoved) != 0 {
@@ -37,7 +37,11 @@ final class ScreenshotWatcher {
                 if !hasFileFlag {
                     var isDirectory: ObjCBool = false
                     let exists = FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)
-                    if !exists || isDirectory.boolValue {
+                    let looksLikeFile = (path as NSString).pathExtension.isEmpty == false
+                    if exists && isDirectory.boolValue {
+                        continue
+                    }
+                    if !hasFileFlag && !exists && !looksLikeFile {
                         continue
                     }
                 }

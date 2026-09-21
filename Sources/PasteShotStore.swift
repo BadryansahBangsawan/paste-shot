@@ -15,6 +15,10 @@ final class PasteShotStore: ObservableObject {
     private var titleGeneration = 0
     private var titleResetTask: Task<Void, Never>?
 
+    init() {
+        start()
+    }
+
     func start() {
         let folder = ScreenshotFolder.resolve()
         let path = folder.standardizedFileURL.path
@@ -55,8 +59,6 @@ final class PasteShotStore: ObservableObject {
     }
 
     private func handleFile(_ url: URL) {
-        guard ScreenshotFile.isScreenshot(url) else { return }
-
         let fileURL = url.standardizedFileURL
         let values: URLResourceValues?
         do {
@@ -84,50 +86,56 @@ final class PasteShotStore: ObservableObject {
         }
     }
 
+
     private func copyWhenReadable(_ url: URL) async {
         var lastError: Error?
+        var sawScreenshot = false
         for attempt in 0..<8 {
-            do {
-                try PasteboardImage.copyFile(url)
-                lastCopiedName = url.lastPathComponent
-                errorMessage = nil
-                menuTitle = "Copied"
-                lastCopiedPath = url.standardizedFileURL.path
+            if ScreenshotFile.isScreenshot(url) {
+                sawScreenshot = true
                 do {
-                    lastCopiedModificationDate = try url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
+                    try PasteboardImage.copyFile(url)
+                    lastCopiedName = url.lastPathComponent
+                    errorMessage = nil
+                    menuTitle = "Copied"
+                    lastCopiedPath = url.standardizedFileURL.path
+                    do {
+                        lastCopiedModificationDate = try url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
+                    } catch {
+                        lastCopiedModificationDate = nil
+                    }
+                    titleResetTask?.cancel()
+                    titleGeneration += 1
+                    let generation = titleGeneration
+                    titleResetTask = Task { @MainActor in
+                        do {
+                            try await Task.sleep(for: .seconds(2))
+                        } catch {
+                            return
+                        }
+                        guard generation == titleGeneration else { return }
+                        if menuTitle == "Copied" {
+                            menuTitle = "Paste Shot"
+                        }
+                    }
+                    return
                 } catch {
-                    lastCopiedModificationDate = nil
+                    lastError = error
                 }
-                titleResetTask?.cancel()
-                titleGeneration += 1
-                let generation = titleGeneration
-                titleResetTask = Task { @MainActor in
-                    do {
-                        try await Task.sleep(for: .seconds(2))
-                    } catch {
-                        return
-                    }
-                    guard generation == titleGeneration else { return }
-                    if menuTitle == "Copied" {
-                        menuTitle = "Paste Shot"
-                    }
-                }
-                return
-            } catch {
-                lastError = error
-                if attempt < 7 {
-                    do {
-                        try await Task.sleep(for: .milliseconds(50))
-                    } catch {
-                        return
-                    }
+            }
+            if attempt < 7 {
+                do {
+                    try await Task.sleep(for: .milliseconds(50))
+                } catch {
+                    return
                 }
             }
         }
-        if let lastError {
+        if sawScreenshot, let lastError {
             errorMessage = lastError.localizedDescription
         }
     }
+
 
     private func abbreviate(_ path: String) -> String {
         let home = FileManager.default.homeDirectoryForCurrentUser.path
