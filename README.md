@@ -82,13 +82,14 @@ A PNG dropped into the folder that is not a screenshot is ignored.
 
 ## Permissions
 
-No Screen Recording permission. No Accessibility. The app only watches the folder the Screenshot UI already wrote.
+No Screen Recording. No Accessibility. Files and Folders for the screenshot folder (Desktop / Documents / Downloads, or a folder you pick) is requested **once**. Settings → **Allow screenshot folder…** if macOS still asks.
+
 
 ## Data
-
 | What | Where |
 |---|---|
 | On/Off | `UserDefaults` `engineer.badry.pasteshot.enabled` |
+| Screenshot folder grant | `UserDefaults` security-scoped bookmark |
 | Screenshot files | The system screenshot folder (unchanged) |
 | Open at Login | `SMAppService.mainApp` |
 

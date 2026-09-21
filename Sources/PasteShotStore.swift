@@ -5,6 +5,7 @@ import Foundation
 final class PasteShotStore: ObservableObject {
     @Published var menuTitle = "Paste Shot"
     @Published var isEnabled = true
+    @Published var folderAllowed = false
     @Published var errorMessage: String?
 
     private var watcher: ScreenshotWatcher?
@@ -13,6 +14,8 @@ final class PasteShotStore: ObservableObject {
     private var lastCopiedModificationDate: Date?
     private var titleGeneration = 0
     private var titleResetTask: Task<Void, Never>?
+    private var accessedFolder: URL?
+
     private static let enabledKey = "engineer.badry.pasteshot.enabled"
 
 
@@ -33,11 +36,28 @@ final class PasteShotStore: ObservableObject {
             start()
         } else {
             stopWatcher()
+            releaseAccess()
             errorMessage = nil
             menuTitle = "Off"
             titleResetTask?.cancel()
         }
     }
+
+    func allowScreenshotFolder() {
+        let folder = ScreenshotFolder.resolve()
+        releaseAccess()
+        guard let url = FolderAccess.promptForFolder(defaultDirectory: folder) else {
+            return
+        }
+        accessedFolder = url
+        folderAllowed = true
+        if errorMessage == "Allow the screenshot folder once in Settings." {
+            errorMessage = nil
+        }
+        watchedPath = nil
+        start()
+    }
+
 
 
     func start() {
@@ -53,13 +73,12 @@ final class PasteShotStore: ObservableObject {
         }
 
 
-        if errorMessage == "Screenshot folder missing." {
-            errorMessage = nil
-        }
+        ensureAccess(to: folder)
 
         if watchedPath == path, watcher != nil {
             return
         }
+
 
         watcher?.stop()
         watcher = nil
@@ -83,6 +102,45 @@ final class PasteShotStore: ObservableObject {
         watcher = nil
         watchedPath = nil
     }
+
+    private func releaseAccess() {
+        if let accessedFolder {
+            accessedFolder.stopAccessingSecurityScopedResource()
+            self.accessedFolder = nil
+        }
+        folderAllowed = false
+    }
+
+    private func ensureAccess(to folder: URL) {
+        if let accessedFolder,
+           accessedFolder.standardizedFileURL.path == folder.standardizedFileURL.path {
+            folderAllowed = true
+            return
+        }
+        releaseAccess()
+        if let url = FolderAccess.activateSavedBookmark() {
+            accessedFolder = url
+            folderAllowed = true
+            if errorMessage == "Allow the screenshot folder once in Settings." {
+                errorMessage = nil
+            }
+            return
+        }
+        do {
+            _ = try FileManager.default.contentsOfDirectory(
+                at: folder,
+                includingPropertiesForKeys: [.isRegularFileKey]
+            )
+            folderAllowed = true
+            if errorMessage == "Allow the screenshot folder once in Settings." {
+                errorMessage = nil
+            }
+        } catch {
+            folderAllowed = false
+            errorMessage = "Allow the screenshot folder once in Settings."
+        }
+    }
+
 
 
     private func handleFile(_ url: URL) {

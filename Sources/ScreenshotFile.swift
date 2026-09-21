@@ -24,18 +24,13 @@ enum ScreenshotFile {
         guard allowedExtensions.contains(ext) else {
             return false
         }
-
-        if isSpotlightScreenCapture(url) {
-            return true
-        }
-
         let stem = url.deletingPathExtension().lastPathComponent
         for prefix in namePrefixes {
             if stem.hasPrefix(prefix) {
                 return true
             }
         }
-        return false
+        return isSpotlightScreenCapture(url)
     }
 
     private static func isSpotlightScreenCapture(_ url: URL) -> Bool {

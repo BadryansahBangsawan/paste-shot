@@ -15,6 +15,7 @@ struct PasteShotApp: App {
 
         Settings {
             SettingsView()
+                .environmentObject(store)
         }
     }
 }

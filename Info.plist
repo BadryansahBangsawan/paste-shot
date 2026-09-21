@@ -13,9 +13,9 @@
 	<key>CFBundleDisplayName</key>
 	<string>Paste Shot</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.3</string>
+	<string>1.0.4</string>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>5</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>14.0</string>
 	<key>LSUIElement</key>
@@ -26,5 +26,11 @@
 	<true/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Paste Shot reads new screenshots from the Desktop (or the folder you allow once) so it can copy them for paste.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Paste Shot reads new screenshots from Documents if that is your screenshot folder. Access is requested once.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Paste Shot reads new screenshots from Downloads if that is your screenshot folder. Access is requested once.</string>
 </dict>
 </plist>
