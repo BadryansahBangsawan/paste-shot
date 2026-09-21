@@ -23,7 +23,7 @@ Do not commit `dist/`, `.build/`, `.swiftpm/`, or secrets. Do not run `dist/` ne
 - Surface failures as a red label with a useful message. Do not `fatalError` on runtime paths, swallow errors with `try?`, or use empty `catch`.
 - Match existing SwiftUI / AppKit patterns in `Sources/`. Do not add a shared package or extra targets.
 - App Sandbox stays off. Do not add a paid Team ID requirement.
-- Do not request Screen Recording. Watch the screenshot folder; leave the file on disk.
+- Do not request Screen Recording. Watch the screenshot folder; delete the file after a successful pasteboard copy.
 
 ## Pull requests
 

@@ -203,6 +203,7 @@ final class PasteShotStore: ObservableObject {
                             menuTitle = "Paste Shot"
                         }
                     }
+                    removeCopiedScreenshot(url)
                     return
                 } catch {
                     lastError = error
@@ -220,6 +221,19 @@ final class PasteShotStore: ObservableObject {
             errorMessage = lastError.localizedDescription
         }
     }
+
+    private func removeCopiedScreenshot(_ url: URL) {
+        let folder = ScreenshotFolder.resolve().standardizedFileURL.path
+        let file = url.standardizedFileURL
+        let prefix = folder.hasSuffix("/") ? folder : folder + "/"
+        guard file.path.hasPrefix(prefix) else { return }
+        do {
+            try FileManager.default.removeItem(at: file)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
 
 
 

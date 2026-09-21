@@ -17,7 +17,7 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 
 - Watches the system screenshot folder (`com.apple.screencapture` `location`, else Desktop). Does not capture the screen.
 - Copies a new screenshot as PNG onto `NSPasteboard` for ⌘V.
-- Leaves the screenshot file on disk.
+- Deletes the screenshot file after it is copied for ⌘V.
 - Ignores non-screenshot PNGs (and other files) in that folder.
 - Allowed types: png, jpg, jpeg, heic, tif, tiff, pdf.
 - Panel is an On/Off switch.
@@ -73,7 +73,7 @@ This is an `LSUIElement` extra. Proof it is running is the **clipboard** status 
 ## Usage
 
 1. Click the extra. The panel is an **On / Off** switch.
-2. **On** (default): ⌘⇧3 or ⌘⇧4 (file save, not Control) copies the screenshot PNG for ⌘V. The file stays on disk.
+2. **On** (default): ⌘⇧3 or ⌘⇧4 (file save, not Control) copies the PNG for ⌘V, then deletes the file.
 3. **Off**: new screenshots are not copied.
 
 A PNG dropped into the folder that is not a screenshot is ignored.
