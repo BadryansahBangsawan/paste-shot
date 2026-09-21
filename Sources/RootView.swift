@@ -12,28 +12,32 @@ struct RootView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            Text(store.statusText)
+            Spacer(minLength: 0)
 
-            if store.lastCopiedName == nil, store.errorMessage == nil {
-                ExtraEmptyState(
-                    title: "No screenshot yet",
-                    detail: "Press ⌘⇧3 or ⌘⇧4. The image is copied for ⌘V.",
-                    actionTitle: "OK",
-                    action: {}
-                )
+            Toggle(isOn: enabledBinding) {
+                Text(store.isEnabled ? "On" : "Off")
+                    .font(.title2.weight(.semibold))
             }
+            .toggleStyle(.switch)
+            .controlSize(.large)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 4)
+            .extraRowSurface()
 
-            if let lastCopiedName = store.lastCopiedName {
-                Text(lastCopiedName)
-                    .extraRowSurface()
-            }
+            Spacer(minLength: 0)
 
             ExtraSettingsFooter()
         }
+        .animation(reduceMotion ? nil : FunTheme.spring, value: store.isEnabled)
         .animation(reduceMotion ? nil : FunTheme.spring, value: store.errorMessage)
-        .animation(reduceMotion ? nil : FunTheme.spring, value: store.lastCopiedName)
-        .animation(reduceMotion ? nil : FunTheme.spring, value: store.statusText)
         .funPanel()
         .onAppear { store.start() }
+    }
+
+    private var enabledBinding: Binding<Bool> {
+        Binding(
+            get: { store.isEnabled },
+            set: { store.setEnabled($0) }
+        )
     }
 }

@@ -10,8 +10,8 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 |---|---|
 | Product | `PasteShot` |
 | Bundle ID | `engineer.badry.pasteshot` |
-| Status item | SF Symbol `doc.on.clipboard` (title: `Copied`, then `Paste Shot`) |
-| Panel | opaque ~360×420 pt |
+| Status item | SF Symbol `doc.on.clipboard` (title: `Paste Shot`, `Copied`, or `Off`) |
+| Panel | opaque ~360×420 pt, On/Off switch |
 
 ## Features
 
@@ -20,6 +20,7 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 - Leaves the screenshot file on disk.
 - Ignores non-screenshot PNGs (and other files) in that folder.
 - Allowed types: png, jpg, jpeg, heic, tif, tiff, pdf.
+- Panel is an On/Off switch.
 
 ## Requirements
 
@@ -27,6 +28,27 @@ Menu extra for macOS 14+. It lives on the **right** of the menu bar and does not
 - Swift 5.9 or later (Xcode or Command Line Tools) only if you build from source
 
 ## Install
+
+Homebrew (macOS 14+):
+
+```bash
+brew tap BadryansahBangsawan/mac-menu-apps
+brew trust BadryansahBangsawan/mac-menu-apps
+brew install --cask paste-shot
+```
+
+`brew trust` is required on Homebrew 6 or `brew install --cask` refuses the tap.
+
+Opens as a menu extra (no Dock icon). The cask is ad-hoc signed. If Gatekeeper blocks it or says it is damaged:
+
+```bash
+xattr -cr /Applications/PasteShot.app
+open /Applications/PasteShot.app
+```
+
+If still blocked: System Settings → Privacy & Security → Open Anyway.
+
+Build from source:
 
 ```bash
 git clone https://github.com/BadryansahBangsawan/paste-shot.git
@@ -36,8 +58,6 @@ ditto dist/PasteShot.app /Applications/PasteShot.app
 xattr -cr /Applications/PasteShot.app
 open /Applications/PasteShot.app
 ```
-
-Ad-hoc signed (`codesign -s -`). If Gatekeeper blocks it or says it is damaged, run the `xattr` line. If it is still blocked: System Settings → Privacy & Security → Open Anyway.
 
 Do not run `dist/PasteShot.app` while `/Applications/PasteShot.app` is running (same bundle ID).
 
@@ -53,11 +73,10 @@ This is an `LSUIElement` extra. Proof it is running is the **clipboard** status 
 
 ## Usage
 
-1. Click the extra. Status shows `Watching` plus the screenshot folder (`~/Desktop` or the `location` preference).
-2. Press ⌘⇧3 or ⌘⇧4 (file save, not Control). A `Screenshot *.png` (or `Screen Shot ` / `Tangkapan Layar `) appears in that folder.
-3. The menu title flashes **Copied**. ⌘V pastes that PNG.
-4. The file stays on disk.
-5. **Settings** at the bottom of the panel: Open at Login, Quit.
+1. Click the extra. The panel is an **On / Off** switch.
+2. **On** (default): ⌘⇧3 or ⌘⇧4 (file save, not Control) copies the screenshot PNG for ⌘V. The file stays on disk.
+3. **Off**: new screenshots are not copied.
+4. **Settings** at the bottom: Open at Login, Quit.
 
 A PNG dropped into the folder that is not a screenshot is ignored.
 
@@ -69,6 +88,7 @@ No Screen Recording permission. No Accessibility. The app only watches the folde
 
 | What | Where |
 |---|---|
+| On/Off | `UserDefaults` `engineer.badry.pasteshot.enabled` |
 | Screenshot files | The system screenshot folder (unchanged) |
 | Open at Login | `SMAppService.mainApp` |
 
@@ -80,7 +100,11 @@ Screenshot bytes go to `NSPasteboard.general` on this Mac. Nothing is uploaded.
 
 ## Uninstall
 
-Delete `/Applications/PasteShot.app`. Turn off Open at Login in Settings first if you enabled it.
+```bash
+brew uninstall --cask paste-shot
+```
+
+Or delete `/Applications/PasteShot.app`. Turn off Open at Login in Settings first if you enabled it.
 
 ## Troubleshooting
 
@@ -90,7 +114,7 @@ Delete `/Applications/PasteShot.app`. Turn off Open at Login in Settings first i
 | Extra missing | Overflow **«**, or `pgrep -x PasteShot` then `open /Applications/PasteShot.app`. |
 | “Damaged” / cannot verify | `xattr -cr /Applications/PasteShot.app`. `spctl --assess` is `rejected` even when it runs. |
 | **Screenshot folder missing.** | Create the folder in Screenshot settings, or restore Desktop. |
-| ⌘⇧4 did nothing in the panel | Use file save, not Control (clipboard-only). Filename should start with `Screenshot `, `Screen Shot `, or `Tangkapan Layar `, or Spotlight `kMDItemIsScreenCapture`. |
+| ⌘⇧4 did nothing | Switch **On**. Use file save, not Control (clipboard-only). Filename should start with `Screenshot `, `Screen Shot `, or `Tangkapan Layar `, or Spotlight `kMDItemIsScreenCapture`. |
 | Random PNG in the folder was not copied | Intended. Only screenshots are copied. |
 | ~10px empty strip under the bar | Reinstall from this repo (panel min height 420). |
 

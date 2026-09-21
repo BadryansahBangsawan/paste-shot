@@ -4,8 +4,7 @@ import Foundation
 @MainActor
 final class PasteShotStore: ObservableObject {
     @Published var menuTitle = "Paste Shot"
-    @Published var statusText = "Watching ~/Desktop"
-    @Published var lastCopiedName: String?
+    @Published var isEnabled = true
     @Published var errorMessage: String?
 
     private var watcher: ScreenshotWatcher?
@@ -14,23 +13,45 @@ final class PasteShotStore: ObservableObject {
     private var lastCopiedModificationDate: Date?
     private var titleGeneration = 0
     private var titleResetTask: Task<Void, Never>?
+    private static let enabledKey = "engineer.badry.pasteshot.enabled"
+
 
     init() {
+        if UserDefaults.standard.object(forKey: Self.enabledKey) as? Bool == false {
+            isEnabled = false
+            menuTitle = "Off"
+            return
+        }
         start()
     }
 
+    func setEnabled(_ on: Bool) {
+        isEnabled = on
+        UserDefaults.standard.set(on, forKey: Self.enabledKey)
+        if on {
+            watchedPath = nil
+            start()
+        } else {
+            stopWatcher()
+            errorMessage = nil
+            menuTitle = "Off"
+            titleResetTask?.cancel()
+        }
+    }
+
+
     func start() {
+        guard isEnabled else { return }
         let folder = ScreenshotFolder.resolve()
         let path = folder.standardizedFileURL.path
-        statusText = "Watching " + abbreviate(folder.path)
 
         if !FileManager.default.fileExists(atPath: folder.path) {
             errorMessage = "Screenshot folder missing."
-            watcher?.stop()
-            watcher = nil
+            stopWatcher()
             watchedPath = path
             return
         }
+
 
         if errorMessage == "Screenshot folder missing." {
             errorMessage = nil
@@ -57,8 +78,15 @@ final class PasteShotStore: ObservableObject {
             }
         )
     }
+    private func stopWatcher() {
+        watcher?.stop()
+        watcher = nil
+        watchedPath = nil
+    }
+
 
     private func handleFile(_ url: URL) {
+        guard isEnabled else { return }
         let fileURL = url.standardizedFileURL
         let values: URLResourceValues?
         do {
@@ -95,7 +123,6 @@ final class PasteShotStore: ObservableObject {
                 sawScreenshot = true
                 do {
                     try PasteboardImage.copyFile(url)
-                    lastCopiedName = url.lastPathComponent
                     errorMessage = nil
                     menuTitle = "Copied"
                     lastCopiedPath = url.standardizedFileURL.path
@@ -137,12 +164,5 @@ final class PasteShotStore: ObservableObject {
     }
 
 
-    private func abbreviate(_ path: String) -> String {
-        let home = FileManager.default.homeDirectoryForCurrentUser.path
-        if path == home { return "~" }
-        if path.hasPrefix(home + "/") {
-            return "~" + path.dropFirst(home.count)
-        }
-        return path
-    }
+
 }
