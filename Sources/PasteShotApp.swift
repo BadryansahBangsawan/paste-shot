@@ -19,6 +19,7 @@ struct PasteShotApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApplication.shared.setActivationPolicy(.accessory)
+        PasteboardImage.startFrontmostObserver()
         if SMAppService.mainApp.status != .enabled {
             do {
                 try SMAppService.mainApp.register()
