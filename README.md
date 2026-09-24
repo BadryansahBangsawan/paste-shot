@@ -2,7 +2,7 @@
 
 # Paste Shot
 
-**Copy each macOS screenshot to the clipboard. ⌘V pastes the image — or the path in Terminal.**
+**Copy each macOS screenshot to the clipboard. ⌘V pastes the PNG.**
 
 Menu extra for macOS 14+. Lives on the **right** of the menu bar. No Dock icon.
 
@@ -33,7 +33,7 @@ Menu extra for macOS 14+. Lives on the **right** of the menu bar. No Dock icon.
 | Piece | Behavior |
 |---|---|
 | **Watch** | Folder from `com.apple.screencapture` `location`, else Desktop. Not Screen Recording. |
-| **Clipboard** | PNG for Notes / Slack / Preview. Quoted POSIX path for Terminal. |
+| **Clipboard** | PNG + TIFF. No `text/plain`, so a browser that prefers text still gets the image. |
 | **Cleanup** | Original screenshot is deleted after copy. A copy stays at `~/Library/Application Support/PasteShot/last.png`. |
 | **Filter** | Only files Spotlight marks as screen captures, or names starting `Screenshot `, `Screen Shot `, or `Tangkapan Layar `. Random PNGs are ignored. |
 | **Types** | png, jpg, jpeg, heic, tif, tiff, pdf |
@@ -97,7 +97,7 @@ This is an `LSUIElement` extra. Proof it is running is the **clipboard** status 
 
 1. Leave the switch **On** (default).
 2. Press ⌘⇧3 or ⌘⇧4 (**file save**, not Control).
-3. ⌘V in Notes / Slack pastes the **image**. ⌘V in Terminal pastes the **quoted path** to `last.png`.
+3. ⌘V pastes the **image** (Notes, Slack, browsers). The same bytes sit at `~/Library/Application Support/PasteShot/last.png`.
 4. **Off** stops copying. The extra still sits in the menu bar and still opens at login.
 
 A PNG dropped into the screenshot folder that is not a screenshot is ignored.
@@ -156,7 +156,8 @@ Turn off **Paste Shot** in System Settings → General → Login Items if it rem
 | `brew install --cask` refuses the tap | `brew trust BadryansahBangsawan/mac-menu-apps` |
 | **Screenshot folder missing.** | Create the folder in Screenshot settings, or restore Desktop. |
 | ⌘⇧4 did nothing | Switch **On**. Use file save, not Control. Name should start with `Screenshot `, `Screen Shot `, or `Tangkapan Layar `, or Spotlight `kMDItemIsScreenCapture`. |
-| Terminal paste is empty | Need **1.0.7+** (PNG + quoted path). Image-only clipboard cannot paste in Terminal. |
+| Website ⌘V pastes `'…/PasteShot/last.png'` | That page read `text/plain`. **1.0.10+** copies PNG/TIFF only. Relaunch, screenshot again. |
+| Terminal ⌘V is empty | Intended. Use `~/Library/Application Support/PasteShot/last.png`, or `defaults write engineer.badry.pasteshot copyPath -bool true`. |
 | Random PNG in the folder was not copied | Intended. Only screenshots are copied. |
 | ~10px empty strip under the bar | Reinstall from this repo. |
 
@@ -189,6 +190,12 @@ No. It watches the file the Screenshot UI already wrote.
 
 **Where did my screenshot go?**  
 Deleted from the screenshot folder after copy. A copy remains at `~/Library/Application Support/PasteShot/last.png`.
+
+**Why did a website paste a file path?**  
+The clipboard used to include a quoted path for Terminal. Sites that read `text/plain` first took that string. Current Paste Shot does not put a path on the clipboard.
+
+**How do I paste the path in Terminal?**  
+`~/Library/Application Support/PasteShot/last.png`. To put the quoted path on the clipboard again: `defaults write engineer.badry.pasteshot copyPath -bool true`.
 
 **How do I stop it opening at login?**  
 System Settings → General → Login Items → **Paste Shot**.
